@@ -81,3 +81,21 @@ plot(sol, idxs = [sys.capacitor.v, sys.resistor.i],
 ```
 
 ![](https://user-images.githubusercontent.com/1814174/164912983-c3f73628-0e19-4e42-b085-4f62ba6f23d1.png)
+
+## Monorepo Structure
+
+This repository includes the following SciML ecosystem packages as a monorepo:
+
+- [BSeries.jl](https://github.com/ranocha/BSeries.jl)
+- [RootedTrees.jl](https://github.com/SciML/RootedTrees.jl)
+- [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl)
+- [ReservoirComputing.jl](https://github.com/SciML/ReservoirComputing.jl)
+- [ModelingToolkit.jl](https://github.com/SciML/ModelingToolkit.jl)
+- [ModelingToolkitNeuralNets.jl](https://github.com/SciML/ModelingToolkitNeuralNets.jl)
+- [NeuralPDE.jl](https://github.com/SciML/NeuralPDE.jl)
+- [ParameterizedFunctions.jl](https://github.com/SciML/ParameterizedFunctions.jl)
+- [DataDrivenDiffEq.jl](https://github.com/SciML/DataDrivenDiffEq.jl)
+- [Catalyst.jl](https://github.com/SciML/Catalyst.jl)
+- [MultiScaleArrays.jl](https://github.com/SciML/MultiScaleArrays.jl)
+
+These packages are included directly in the repository (without git submodules) for streamlined development and testing across the SciML ecosystem.
