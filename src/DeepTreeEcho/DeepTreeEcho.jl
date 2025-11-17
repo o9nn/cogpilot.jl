@@ -74,6 +74,8 @@ include("PSystemReservoir.jl")
 include("MembraneGarden.jl")
 include("OntogeneticEngine.jl")
 include("TaskflowIntegration.jl")
+include("PackageIntegration.jl")
+include("Visualization.jl")
 
 using .JSurfaceReactor
 using .BSeriesRidge
@@ -81,6 +83,8 @@ using .PSystemReservoir
 using .MembraneGarden
 using .OntogeneticEngine
 using .TaskflowIntegration
+using .PackageIntegration
+using .Visualization
 
 export DeepTreeEchoSystem
 export initialize!, evolve!, process_input!, get_system_status
