@@ -109,10 +109,39 @@ mutable struct A000081UnifiedSystem
     config::Dict{String, Any}
     
     function A000081UnifiedSystem(;
-        max_order::Int=8,
-        reservoir_size::Int=100,
-        num_membranes::Int=3,
-        symplectic::Bool=true)
+        max_order::Union{Int,Nothing}=nothing,
+        reservoir_size::Union{Int,Nothing}=nothing,
+        num_membranes::Union{Int,Nothing}=nothing,
+        symplectic::Bool=true,
+        base_order::Int=5)
+        
+        # Load parameter derivation module
+        include("A000081Parameters.jl")
+        using .A000081Parameters
+        
+        # Derive parameters from A000081 if not provided
+        if any(isnothing.([reservoir_size, max_order, num_membranes]))
+            println("\n⚠ Deriving parameters from A000081 (base_order=$base_order)...")
+            params = A000081Parameters.get_parameter_set(base_order, membrane_order=4)
+            
+            reservoir_size = isnothing(reservoir_size) ? params.reservoir_size : reservoir_size
+            max_order = isnothing(max_order) ? params.max_tree_order : max_order
+            num_membranes = isnothing(num_membranes) ? params.num_membranes : num_membranes
+            
+            println("✓ A000081-aligned parameters:")
+            println("  reservoir_size = $reservoir_size (cumulative trees 1:$base_order)")
+            println("  max_order      = $max_order")
+            println("  num_membranes  = $num_membranes (A000081[4])")
+        else
+            # Validate provided parameters
+            is_valid, message = A000081Parameters.validate_parameters(
+                reservoir_size, max_order, num_membranes, 0.1, 0.05
+            )
+            if !is_valid
+                println("\n⚠ WARNING: Parameters may not align with A000081:")
+                println("  $message")
+            end
+        end
         
         # Generate rooted trees from A000081 up to max_order
         rooted_trees = generate_a000081_trees(max_order)
@@ -148,7 +177,8 @@ mutable struct A000081UnifiedSystem
             "reservoir_size" => reservoir_size,
             "num_membranes" => num_membranes,
             "symplectic" => symplectic,
-            "a000081_count" => length(rooted_trees)
+            "a000081_count" => length(rooted_trees),
+            "base_order" => base_order
         )
         
         new(rooted_trees, J, H, diff_map, reservoir_state, reservoir_weights,

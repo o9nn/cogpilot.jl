@@ -40,17 +40,23 @@ Random.seed!(42)
 println("\n[1/5] Creating Deep Tree Echo System...")
 println("─"^60)
 
-# Create the system
+# Create the system using A000081-derived parameters
+# Base order 5: reservoir_size=17, max_tree_order=8, num_membranes=2
+params = get_parameter_set(5, membrane_order=3, max_order_offset=3)
+
+println("\n🌳 Using A000081-derived parameters:")
+explain_parameters(params)
+
 system = DeepTreeEchoSystem(
-    reservoir_size = 50,      # Reservoir dimension
-    max_tree_order = 8,       # Maximum tree size
-    num_membranes = 3,        # Number of membranes
-    symplectic = true,        # Use symplectic J-surface
-    growth_rate = 0.1,        # Tree growth rate
-    mutation_rate = 0.05      # Mutation probability
+    reservoir_size = params.reservoir_size,   # 17 (1+1+2+4+9)
+    max_tree_order = params.max_tree_order,   # 8
+    num_membranes = params.num_membranes,     # 2 (A000081[3])
+    symplectic = true,
+    growth_rate = params.growth_rate,         # ≈2.22 (20/9)
+    mutation_rate = params.mutation_rate      # ≈0.11 (1/9)
 )
 
-println("✓ System created with configuration:")
+println("\n✓ System created with A000081-aligned configuration:")
 for (key, value) in system.config
     println("  • $key: $value")
 end
@@ -58,8 +64,10 @@ end
 println("\n[2/5] Initializing with A000081 seed trees...")
 println("─"^60)
 
-# Initialize with seed trees from A000081 sequence
-initialize!(system, seed_trees=15)
+# Initialize with seed trees - use A000081[4] = 4 trees
+# This aligns with the tree count at order 4
+seed_count = A000081Parameters.A000081_SEQUENCE[4]  # 4 trees
+initialize!(system, seed_trees=seed_count)
 
 println("\n[3/5] Evolving system for 30 generations...")
 println("─"^60)

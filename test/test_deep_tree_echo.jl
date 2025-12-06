@@ -32,8 +32,63 @@ Random.seed!(42)
 
 @testset "Deep Tree Echo Tests" begin
     
+    @testset "0. A000081 Parameter Derivation" begin
+        println("\n[0/9] Testing A000081 Parameter Derivation...")
+        
+        using DeepTreeEcho.A000081Parameters
+        
+        # Test sequence constants
+        @test A000081_SEQUENCE[1] == 1
+        @test A000081_SEQUENCE[2] == 1
+        @test A000081_SEQUENCE[3] == 2
+        @test A000081_SEQUENCE[4] == 4
+        @test A000081_SEQUENCE[5] == 9
+        @test A000081_SEQUENCE[6] == 20
+        
+        # Test reservoir size derivation
+        @test derive_reservoir_size(1) == 1      # 1
+        @test derive_reservoir_size(2) == 2      # 1+1
+        @test derive_reservoir_size(3) == 4      # 1+1+2
+        @test derive_reservoir_size(4) == 8      # 1+1+2+4
+        @test derive_reservoir_size(5) == 17     # 1+1+2+4+9
+        @test derive_reservoir_size(6) == 37     # 1+1+2+4+9+20
+        
+        # Test membrane count derivation
+        @test derive_num_membranes(1) == 1
+        @test derive_num_membranes(3) == 2
+        @test derive_num_membranes(4) == 4
+        @test derive_num_membranes(5) == 9
+        
+        # Test growth rate derivation
+        growth_5 = derive_growth_rate(5)
+        @test abs(growth_5 - 20/9) < 0.001   # A000081[6]/A000081[5] = 20/9
+        
+        # Test mutation rate derivation
+        mutation_5 = derive_mutation_rate(5)
+        @test abs(mutation_5 - 1/9) < 0.001  # 1/A000081[5] = 1/9
+        
+        # Test parameter set creation
+        params = get_parameter_set(5, membrane_order=3)
+        @test params.base_order == 5
+        @test params.reservoir_size == 17
+        @test params.num_membranes == 2
+        @test params.max_tree_order == 8
+        
+        # Test parameter validation
+        is_valid, msg = validate_parameters(17, 8, 2, 20/9, 1/9)
+        @test is_valid
+        
+        # Test invalid parameters
+        is_valid, msg = validate_parameters(100, 8, 3, 0.1, 0.05)
+        @test !is_valid
+        
+        println("  ✓ A000081 sequence correct")
+        println("  ✓ Parameter derivation functional")
+        println("  ✓ Validation working")
+    end
+    
     @testset "1. Ontogenetic Engine" begin
-        println("\n[1/8] Testing Ontogenetic Engine...")
+        println("\n[1/9] Testing Ontogenetic Engine...")
         
         using DeepTreeEcho.OntogeneticEngine
         
@@ -80,7 +135,7 @@ Random.seed!(42)
     end
     
     @testset "2. B-Series Ridges" begin
-        println("\n[2/8] Testing B-Series Ridges...")
+        println("\n[2/9] Testing B-Series Ridges...")
         
         using DeepTreeEcho.BSeriesRidge
         
@@ -110,7 +165,7 @@ Random.seed!(42)
     end
     
     @testset "3. J-Surface Reactor" begin
-        println("\n[3/8] Testing J-Surface Reactor...")
+        println("\n[3/9] Testing J-Surface Reactor...")
         
         using DeepTreeEcho.JSurfaceReactor
         
@@ -149,7 +204,7 @@ Random.seed!(42)
     end
     
     @testset "4. P-System Reservoirs" begin
-        println("\n[4/8] Testing P-System Reservoirs...")
+        println("\n[4/9] Testing P-System Reservoirs...")
         
         using DeepTreeEcho.PSystemReservoir
         
@@ -184,7 +239,7 @@ Random.seed!(42)
     end
     
     @testset "5. Membrane Gardens" begin
-        println("\n[5/8] Testing Membrane Gardens...")
+        println("\n[5/9] Testing Membrane Gardens...")
         
         using DeepTreeEcho.MembraneGarden
         
@@ -226,26 +281,31 @@ Random.seed!(42)
     end
     
     @testset "6. Integrated System" begin
-        println("\n[6/8] Testing Integrated System...")
+        println("\n[6/9] Testing Integrated System...")
         
-        # Test system creation
+        # Test system creation with A000081-derived parameters
+        # base_order=4 → reservoir=8, max_order=7, membranes=2
+        params = get_parameter_set(4, membrane_order=3)
+        
         system = DeepTreeEchoSystem(
-            reservoir_size = 30,
-            max_tree_order = 6,
-            num_membranes = 2,
+            reservoir_size = params.reservoir_size,    # 8
+            max_tree_order = params.max_tree_order,    # 7
+            num_membranes = params.num_membranes,      # 2
             symplectic = true,
-            growth_rate = 0.1,
-            mutation_rate = 0.05
+            growth_rate = params.growth_rate,
+            mutation_rate = params.mutation_rate
         )
         
-        @test system.config["reservoir_size"] == 30
-        @test system.config["max_tree_order"] == 6
+        @test system.config["reservoir_size"] == 8
+        @test system.config["max_tree_order"] == 7
+        @test system.config["num_membranes"] == 2
         @test system.step_count == 0
         
-        # Test initialization
-        initialize!(system, seed_trees=8)
+        # Test initialization with A000081[4] = 4 seed trees
+        seed_count = A000081Parameters.A000081_SEQUENCE[4]
+        initialize!(system, seed_trees=seed_count)
         
-        @test length(system.garden.trees) == 8
+        @test length(system.garden.trees) == seed_count
         @test system.ontogenetic_state.generation == 0
         
         # Test evolution
@@ -275,7 +335,7 @@ Random.seed!(42)
     end
     
     @testset "7. Taskflow Integration" begin
-        println("\n[7/8] Testing Taskflow Integration...")
+        println("\n[7/9] Testing Taskflow Integration...")
         
         using DeepTreeEcho.TaskflowIntegration
         
@@ -320,7 +380,7 @@ Random.seed!(42)
     end
     
     @testset "8. Package Integration" begin
-        println("\n[8/8] Testing Package Integration...")
+        println("\n[8/9] Testing Package Integration...")
         
         using DeepTreeEcho.PackageIntegration
         
@@ -354,6 +414,42 @@ Random.seed!(42)
         println("  ✓ Tree generation functional")
     end
     
+    @testset "9. A000081 System Alignment" begin
+        println("\n[9/9] Testing Complete A000081 Alignment...")
+        
+        # Test system with auto-derived parameters
+        system_auto = DeepTreeEchoSystem(base_order=4)
+        
+        @test system_auto.config["reservoir_size"] == 8   # 1+1+2+4
+        @test system_auto.config["max_tree_order"] == 7   # 4+3
+        @test system_auto.config["num_membranes"] == 2    # A000081[3]
+        
+        # Test system with explicit A000081 parameters
+        params = get_parameter_set(5, membrane_order=4)
+        system_explicit = DeepTreeEchoSystem(
+            reservoir_size = params.reservoir_size,
+            max_tree_order = params.max_tree_order,
+            num_membranes = params.num_membranes,
+            growth_rate = params.growth_rate,
+            mutation_rate = params.mutation_rate
+        )
+        
+        @test system_explicit.config["reservoir_size"] == 17  # 1+1+2+4+9
+        @test system_explicit.config["num_membranes"] == 4    # A000081[4]
+        
+        # Initialize and evolve with A000081 seed count
+        seed_count = A000081Parameters.A000081_SEQUENCE[3]  # 2
+        initialize!(system_auto, seed_trees=seed_count)
+        evolve!(system_auto, 3, verbose=false)
+        
+        @test system_auto.step_count == 3
+        @test system_auto.ontogenetic_state.generation >= 3
+        
+        println("  ✓ Auto-derivation works correctly")
+        println("  ✓ Explicit parameters align with A000081")
+        println("  ✓ System evolution maintains alignment")
+    end
+    
 end
 
 println("\n" * "="^60)
@@ -364,6 +460,7 @@ println("="^60)
 println("\nAll tests completed successfully! ✓")
 println("\nDeep Tree Echo System Status:")
 println("  • Ontogenetic engine: Operational")
+println("  • A000081 parameter derivation: Functional")
 println("  • B-series ridges: Functional")
 println("  • J-surface reactor: Active")
 println("  • P-system reservoirs: Running")
@@ -373,6 +470,7 @@ println("  • Package integration: Available")
 
 println("\nThe system is ready for:")
 println("  ✓ Large-scale tree evolution")
+println("  ✓ A000081-aligned parameter configuration")
 println("  ✓ Parallel task execution")
 println("  ✓ Cognitive computing workflows")
 println("  ✓ Reservoir-based learning")

@@ -25,27 +25,46 @@ The system operates through five integrated layers:
 - `MembraneGarden`: Tree cultivation
 - `OntogeneticEngine`: A000081-based generation
 - `TaskflowIntegration`: Parallel task graph execution
+- `A000081Parameters`: Parameter derivation from OEIS A000081
 
-# Example Usage
+# Parameter Philosophy: A000081 Alignment
+
+**CRITICAL**: All system parameters MUST be derived from the OEIS A000081 sequence
+to ensure mathematical consistency with the rooted tree topology.
+
+A000081: {1, 1, 2, 4, 9, 20, 48, 115, 286, 719, ...}
+
+## Recommended Usage (A000081-Derived Parameters)
 
 ```julia
 using DeepTreeEcho
 
-# Create system
+# Option 1: Let the system derive all parameters (RECOMMENDED)
+system = DeepTreeEchoSystem(base_order=5)
+
+# Option 2: Use explicit parameter set derivation
+params = get_parameter_set(5, membrane_order=4)
 system = DeepTreeEchoSystem(
-    reservoir_size = 100,
-    max_tree_order = 8,
-    num_membranes = 3
+    reservoir_size = params.reservoir_size,   # 17 (cumulative trees)
+    max_tree_order = params.max_tree_order,   # 8
+    num_membranes = params.num_membranes,     # 4 (A000081[4])
+    growth_rate = params.growth_rate,         # ≈2.22 (20/9)
+    mutation_rate = params.mutation_rate      # ≈0.11 (1/9)
 )
 
-# Initialize with seed trees
-initialize!(system)
+# Explain parameter derivation
+explain_parameters(params)
+```
 
-# Evolve for 50 generations
-evolve!(system, 50)
+## Legacy Usage (Manual Parameters - NOT RECOMMENDED)
 
-# Get system status
-status = get_system_status(system)
+```julia
+# This will show warnings if parameters don't align with A000081
+system = DeepTreeEchoSystem(
+    reservoir_size = 100,  # ⚠ Arbitrary value
+    max_tree_order = 8,
+    num_membranes = 3      # ⚠ Not in A000081[1:6]
+)
 ```
 
 # Taskflow Integration
@@ -55,6 +74,7 @@ using DeepTreeEcho
 using DeepTreeEcho.TaskflowIntegration
 
 # Create hybrid system with parallel execution
+system = DeepTreeEchoSystem(base_order=5)
 tf_system = TaskflowOntogeneticSystem(system, num_threads=8)
 
 # Evolve with parallel task graphs
@@ -68,6 +88,7 @@ using Random
 using Statistics
 
 # Include submodules
+include("A000081Parameters.jl")
 include("JSurfaceReactor.jl")
 include("BSeriesRidge.jl")
 include("PSystemReservoir.jl")
@@ -77,6 +98,7 @@ include("TaskflowIntegration.jl")
 include("PackageIntegration.jl")
 include("Visualization.jl")
 
+using .A000081Parameters
 using .JSurfaceReactor
 using .BSeriesRidge
 using .PSystemReservoir
@@ -90,6 +112,7 @@ export DeepTreeEchoSystem
 export initialize!, evolve!, process_input!, get_system_status
 export plant_trees!, harvest_feedback!, adapt_topology!
 export TaskflowOntogeneticSystem, evolve_with_taskflow!
+export get_parameter_set, explain_parameters, validate_parameters, A000081ParameterSet
 
 """
     DeepTreeEchoSystem
@@ -119,22 +142,65 @@ mutable struct DeepTreeEchoSystem
     step_count::Int
     
     function DeepTreeEchoSystem(;
-        reservoir_size::Int=100,
-        max_tree_order::Int=8,
-        num_membranes::Int=3,
+        reservoir_size::Union{Int,Nothing}=nothing,
+        max_tree_order::Union{Int,Nothing}=nothing,
+        num_membranes::Union{Int,Nothing}=nothing,
         symplectic::Bool=true,
-        growth_rate::Float64=0.1,
-        mutation_rate::Float64=0.05)
+        growth_rate::Union{Float64,Nothing}=nothing,
+        mutation_rate::Union{Float64,Nothing}=nothing,
+        base_order::Int=5)
+        
+        # Derive parameters from A000081 if not provided
+        if any(isnothing.([reservoir_size, max_tree_order, num_membranes, growth_rate, mutation_rate]))
+            println("\n⚠ Some parameters not provided - deriving from A000081 (base_order=$base_order)...")
+            params = get_parameter_set(base_order, membrane_order=3)
+            
+            reservoir_size = isnothing(reservoir_size) ? params.reservoir_size : reservoir_size
+            max_tree_order = isnothing(max_tree_order) ? params.max_tree_order : max_tree_order
+            num_membranes = isnothing(num_membranes) ? params.num_membranes : num_membranes
+            growth_rate = isnothing(growth_rate) ? params.growth_rate : growth_rate
+            mutation_rate = isnothing(mutation_rate) ? params.mutation_rate : mutation_rate
+            
+            println("✓ Derived A000081-aligned parameters:")
+            println("  reservoir_size  = $reservoir_size (cumulative trees up to order $base_order)")
+            println("  max_tree_order  = $max_tree_order")
+            println("  num_membranes   = $num_membranes (A000081[3])")
+            println("  growth_rate     = $(round(growth_rate, digits=4))")
+            println("  mutation_rate   = $(round(mutation_rate, digits=4))")
+        else
+            # Validate provided parameters
+            is_valid, message = validate_parameters(reservoir_size, max_tree_order, num_membranes,
+                                                   growth_rate, mutation_rate)
+            if !is_valid
+                println("\n⚠ WARNING: Parameters may not align with A000081 topology:")
+                for line in split(message, "\n")
+                    println("  $line")
+                end
+                println("  Consider using get_parameter_set() for mathematically justified parameters.")
+                println()
+            end
+        end
         
         # Create J-surface
         jsurface = create_jsurface(reservoir_size; symplectic=symplectic)
-        jsurface_state = JSurfaceState(reservoir_size, 20)
+        # Use A000081-derived value for population size
+        population_size = A000081Parameters.derive_num_membranes(4)  # 4 → 4 populations
+        jsurface_state = JSurfaceState(reservoir_size, population_size)
         
         # Create B-series ridge
         ridge = create_ridge(max_tree_order)
         
-        # Create membrane reservoir
-        membrane_structure = num_membranes == 3 ? "[[]'2 []'3]'1" : "[]'1"
+        # Create membrane reservoir with structure based on num_membranes
+        membrane_structure = if num_membranes == 1
+            "[]'1"
+        elseif num_membranes == 2
+            "[[]'2]'1"
+        elseif num_membranes == 4
+            "[[]'2 []'3 []'4]'1"
+        else
+            "[[]'2 []'3]'1"  # Default for other values
+        end
+        
         reservoir = create_membrane_reservoir(
             membrane_structure,
             alphabet=["a", "b", "c", "d", "e"]
@@ -158,7 +224,9 @@ mutable struct DeepTreeEchoSystem
             "num_membranes" => num_membranes,
             "symplectic" => symplectic,
             "growth_rate" => growth_rate,
-            "mutation_rate" => mutation_rate
+            "mutation_rate" => mutation_rate,
+            "base_order" => base_order,
+            "a000081_aligned" => is_valid || any(isnothing.([reservoir_size, max_tree_order, num_membranes, growth_rate, mutation_rate]))
         )
         
         new(jsurface, jsurface_state, ridge, reservoir, garden,
