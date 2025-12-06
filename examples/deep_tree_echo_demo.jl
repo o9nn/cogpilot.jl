@@ -45,7 +45,14 @@ println("─"^60)
 params = get_parameter_set(5, membrane_order=3, max_order_offset=3)
 
 println("\n🌳 Using A000081-derived parameters:")
-explain_parameters(params)
+# Optionally show detailed parameter explanation (can be verbose)
+# explain_parameters(params)  # Uncomment for detailed derivation info
+println("  reservoir_size  = $(params.reservoir_size) (cumulative A000081[1:5])")
+println("  max_tree_order  = $(params.max_tree_order)")
+println("  num_membranes   = $(params.num_membranes) (A000081[3])")
+println("  growth_rate     = $(round(params.growth_rate, digits=4)) (20/9)")
+println("  mutation_rate   = $(round(params.mutation_rate, digits=4)) (1/9)")
+println()
 
 system = DeepTreeEchoSystem(
     reservoir_size = params.reservoir_size,   # 17 (1+1+2+4+9)

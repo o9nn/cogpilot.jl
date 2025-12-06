@@ -179,7 +179,7 @@ growth_rate = derive_growth_rate(5)
 ```
 """
 function derive_growth_rate(base_order::Int)
-    if base_order < 1 || base_order >= length(A000081_SEQUENCE)
+    if base_order < 1 || base_order > length(A000081_SEQUENCE) - 1
         error("base_order must be between 1 and $(length(A000081_SEQUENCE) - 1)")
     end
     
