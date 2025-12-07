@@ -14,6 +14,7 @@ module OntogeneticEngine
 
 using LinearAlgebra
 using Random
+using Statistics
 
 export A000081Generator, OntogeneticState
 export generate_a000081_trees, ontogenetic_step!, self_evolve!

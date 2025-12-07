@@ -150,6 +150,9 @@ mutable struct DeepTreeEchoSystem
         mutation_rate::Union{Float64,Nothing}=nothing,
         base_order::Int=5)
         
+        # Track if parameters are A000081-aligned
+        is_a000081_aligned = false
+        
         # Derive parameters from A000081 if not provided
         if any(isnothing.([reservoir_size, max_tree_order, num_membranes, growth_rate, mutation_rate]))
             println("\n⚠ Some parameters not provided - deriving from A000081 (base_order=$base_order)...")
@@ -167,6 +170,8 @@ mutable struct DeepTreeEchoSystem
             println("  num_membranes   = $num_membranes (A000081[3])")
             println("  growth_rate     = $(round(growth_rate, digits=4))")
             println("  mutation_rate   = $(round(mutation_rate, digits=4))")
+            
+            is_a000081_aligned = true
         else
             # Validate provided parameters
             is_valid, message = validate_parameters(reservoir_size, max_tree_order, num_membranes,
@@ -179,6 +184,7 @@ mutable struct DeepTreeEchoSystem
                 println("  Consider using get_parameter_set() for mathematically justified parameters.")
                 println()
             end
+            is_a000081_aligned = is_valid
         end
         
         # Create J-surface
@@ -226,7 +232,7 @@ mutable struct DeepTreeEchoSystem
             "growth_rate" => growth_rate,
             "mutation_rate" => mutation_rate,
             "base_order" => base_order,
-            "a000081_aligned" => is_valid || any(isnothing.([reservoir_size, max_tree_order, num_membranes, growth_rate, mutation_rate]))
+            "a000081_aligned" => is_a000081_aligned
         )
         
         new(jsurface, jsurface_state, ridge, reservoir, garden,

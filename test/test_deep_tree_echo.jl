@@ -35,7 +35,7 @@ Random.seed!(42)
     @testset "0. A000081 Parameter Derivation" begin
         println("\n[0/9] Testing A000081 Parameter Derivation...")
         
-        using DeepTreeEcho.A000081Parameters
+        using .DeepTreeEcho.A000081Parameters
         
         # Test sequence constants
         @test A000081_SEQUENCE[1] == 1
@@ -99,7 +99,7 @@ Random.seed!(42)
     @testset "1. Ontogenetic Engine" begin
         println("\n[1/9] Testing Ontogenetic Engine...")
         
-        using DeepTreeEcho.OntogeneticEngine
+        using .DeepTreeEcho.OntogeneticEngine
         
         # Test A000081 generator
         generator = A000081Generator(10)
@@ -146,7 +146,7 @@ Random.seed!(42)
     @testset "2. B-Series Ridges" begin
         println("\n[2/9] Testing B-Series Ridges...")
         
-        using DeepTreeEcho.BSeriesRidge
+        using .DeepTreeEcho.BSeriesRidge
         
         # Test ridge creation
         ridge = create_ridge(6)
@@ -176,7 +176,7 @@ Random.seed!(42)
     @testset "3. J-Surface Reactor" begin
         println("\n[3/9] Testing J-Surface Reactor...")
         
-        using DeepTreeEcho.JSurfaceReactor
+        using .DeepTreeEcho.JSurfaceReactor
         
         # Test J-surface creation
         jsurface = create_jsurface(20, symplectic=true)
@@ -215,7 +215,7 @@ Random.seed!(42)
     @testset "4. P-System Reservoirs" begin
         println("\n[4/9] Testing P-System Reservoirs...")
         
-        using DeepTreeEcho.PSystemReservoir
+        using .DeepTreeEcho.PSystemReservoir
         
         # Test membrane creation
         reservoir = create_membrane_reservoir(
@@ -250,7 +250,7 @@ Random.seed!(42)
     @testset "5. Membrane Gardens" begin
         println("\n[5/9] Testing Membrane Gardens...")
         
-        using DeepTreeEcho.MembraneGarden
+        using .DeepTreeEcho.MembraneGarden
         
         # Test garden creation
         garden = create_garden()
@@ -346,7 +346,7 @@ Random.seed!(42)
     @testset "7. Taskflow Integration" begin
         println("\n[7/9] Testing Taskflow Integration...")
         
-        using DeepTreeEcho.TaskflowIntegration
+        using .DeepTreeEcho.TaskflowIntegration
         
         # Test task graph creation
         graph = TaskGraph()
@@ -391,7 +391,7 @@ Random.seed!(42)
     @testset "8. Package Integration" begin
         println("\n[8/9] Testing Package Integration...")
         
-        using DeepTreeEcho.PackageIntegration
+        using .DeepTreeEcho.PackageIntegration
         
         # Test integration status
         status = integration_status()
