@@ -96,6 +96,20 @@ end
                targets::Vector{<:Vector})
 
 Train ESN output weights using ridge regression.
+
+Uses a numerically stable approach that avoids explicit matrix inversion
+for large reservoirs. Ridge parameter provides regularization.
+
+# Arguments
+- `esn::EchoStateReservoir{T}`: Echo state network to train
+- `inputs::Vector{<:Vector}`: Input sequences
+- `targets::Vector{<:Vector}`: Target sequences
+- `ridge_param=1e-6`: Ridge regression parameter (λ)
+
+# Implementation
+Solves: W_out = Y·S^T·(S·S^T + λI)^(-1)
+Using: W_out = (Y·S^T) / (S·S^T + λI) with Julia's backslash operator
+which uses QR or Cholesky decomposition for numerical stability.
 """
 function train_esn!(esn::EchoStateReservoir{T}, 
                    inputs::Vector{<:Vector}, 
@@ -113,7 +127,8 @@ function train_esn!(esn::EchoStateReservoir{T},
     # Stack targets
     target_matrix = hcat(targets...)
     
-    # Ridge regression: W_out = Y·S^T·(S·S^T + λI)^(-1)
+    # Ridge regression using numerically stable solver
+    # (S·S^T + λI) is positive definite, so Cholesky or QR will be used
     ridge_matrix = states * states' + T(ridge_param) * I(esn.reservoir_size)
     esn.W_out = target_matrix * states' / ridge_matrix
     

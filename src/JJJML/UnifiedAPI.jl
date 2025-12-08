@@ -68,6 +68,9 @@ Generate text from a prompt using the loaded model.
 # Returns
 - Generated text string
 
+# Throws
+- `ErrorException`: If no model is loaded
+
 Note: This is a placeholder. Full implementation would:
 1. Tokenize prompt
 2. Run inference loop
@@ -78,8 +81,7 @@ function generate(model, prompt::String; max_tokens=50, temperature=0.7, top_p=0
     println("Parameters: max_tokens=$max_tokens, temperature=$temperature, top_p=$top_p")
     
     if model === nothing
-        @warn "No model loaded - returning placeholder response"
-        return "This is a placeholder response. Load a model first with load_model()."
+        error("No model loaded. Load a model first with load_model().")
     end
     
     # Placeholder: return echo of prompt

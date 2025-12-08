@@ -80,7 +80,18 @@ end
     compute_elementary_differential(tree::RootedTree, f, y0)
 
 Compute elementary differential F(τ)(y₀) for tree τ at point y₀.
-Simplified version using directional derivatives.
+
+**Note**: This is a simplified implementation that approximates elementary
+differentials for all tree orders. For accurate B-series integration beyond
+order 2, a full recursive tree traversal implementation is needed.
+
+For production use with RootedTrees.jl integration, this should be replaced
+with proper elementary differential computation based on tree structure.
+
+Current limitations:
+- Returns f(y0) for all trees (accurate only for single-node tree ∅)
+- Higher-order trees require recursive application of f^(k)
+- Full implementation would use tree structure to guide differentiation
 """
 function compute_elementary_differential(tree::RootedTree, f, y0::AbstractVector)
     n = tree_order(tree)
@@ -90,7 +101,8 @@ function compute_elementary_differential(tree::RootedTree, f, y0::AbstractVector
         return f(y0)
     else
         # Simplified: approximate with f evaluated at y0
-        # Full implementation would require recursive tree traversal
+        # TODO: Full implementation requires recursive tree traversal
+        # For tree [τ₁,...,τₖ]: F(tree)(y) = f^(k)(y)[F(τ₁)(y),...,F(τₖ)(y)]
         return f(y0)
     end
 end
