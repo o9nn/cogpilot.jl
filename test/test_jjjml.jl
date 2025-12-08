@@ -188,6 +188,86 @@ using .JJJML
         @test params isa NamedTuple
     end
     
+    @testset "JAX Bridge" begin
+        # Test availability check (public API)
+        available = is_jax_available()
+        @test available isa Bool
+        
+        # Note: Actual JAX tests require Python/JAX installation
+        # These tests verify the API exists and handles missing JAX gracefully
+        
+        # Test that functions exist
+        @test isdefined(JJJML, :init_jax)
+        @test isdefined(JJJML, :julia_to_jax)
+        @test isdefined(JJJML, :jax_to_julia)
+        @test isdefined(JJJML, :jax_gradient)
+        @test isdefined(JJJML, :jax_jit)
+        @test isdefined(JJJML, :jax_vmap)
+        @test isdefined(JJJML, :print_jax_info)
+        
+        # Test info printing (should not error)
+        @test_nowarn print_jax_info()
+        
+        # Test init returns nothing when JAX not available
+        result = init_jax()
+        @test result === nothing || result isa JAXBackend
+    end
+    
+    @testset "Quantization" begin
+        # Create test array
+        arr = randn(Float32, 100, 100)
+        
+        # Test Q4_K quantization
+        qtype_4bit = Q4_K()
+        qarr_4bit = quantize(arr, qtype_4bit)
+        @test qarr_4bit isa QuantizedArray{Q4_K}
+        @test qarr_4bit.original_shape == (100, 100)
+        
+        # Test Q4_K dequantization
+        arr_restored_4bit = dequantize(qarr_4bit)
+        @test size(arr_restored_4bit) == size(arr)
+        
+        # Test Q4_K compression ratio
+        ratio_4bit = compression_ratio(qarr_4bit)
+        @test ratio_4bit > 3.0  # Should be ~5x
+        
+        # Test Q8_0 quantization
+        qtype_8bit = Q8_0()
+        qarr_8bit = quantize(arr, qtype_8bit)
+        @test qarr_8bit isa QuantizedArray{Q8_0}
+        
+        # Test Q8_0 dequantization
+        arr_restored_8bit = dequantize(qarr_8bit)
+        @test size(arr_restored_8bit) == size(arr)
+        
+        # Test Q8_0 compression ratio
+        ratio_8bit = compression_ratio(qarr_8bit)
+        @test ratio_8bit > 2.0  # Should be ~3.6x
+        
+        # Test F16 quantization
+        qtype_f16 = F16()
+        qarr_f16 = quantize(arr, qtype_f16)
+        @test qarr_f16 isa QuantizedArray{F16}
+        
+        # Test F16 dequantization
+        arr_restored_f16 = dequantize(qarr_f16)
+        @test size(arr_restored_f16) == size(arr)
+        
+        # Test F16 compression ratio
+        ratio_f16 = compression_ratio(qarr_f16)
+        @test ratio_f16 ≈ 2.0  # Should be exactly 2x
+        
+        # Test quantization error (8-bit should be more accurate than 4-bit)
+        error_4bit = quantization_error(arr, qarr_4bit)
+        error_8bit = quantization_error(arr, qarr_8bit)
+        @test error_8bit < error_4bit
+        
+        # Test info printing
+        @test_nowarn print_quantization_info(qarr_4bit)
+        @test_nowarn print_quantization_info(qarr_8bit)
+        @test_nowarn print_quantization_info(qarr_f16)
+    end
+    
 end
 
 println("\n" * "="^60)
