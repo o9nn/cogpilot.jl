@@ -22,8 +22,14 @@ Preferences = "21216c6a-2e73-6563-6e65-726566657250"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+ReservoirComputing = "7c2d2b1e-3dd4-11ea-355a-8f6a8116e294"
+RootedTrees = "47965b36-3f3e-11e9-0dcf-4570dfd42a8c"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 WeightInitializers = "d49dbf32-c5c2-4618-8acc-27bb2598ef2d"
+
+[sources]
+ReservoirComputing = {path = "/home/runner/work/cogpilot.jl/cogpilot.jl/ReservoirComputing.jl"}
+RootedTrees = {path = "/home/runner/work/cogpilot.jl/cogpilot.jl/RootedTrees.jl"}
 
 [compat]
 ADTypes = "1"
