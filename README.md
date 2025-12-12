@@ -2,6 +2,10 @@
 
 [![Join the chat at https://julialang.zulipchat.com #sciml-bridged](https://img.shields.io/static/v1?label=Zulip&message=chat&color=9558b2&labelColor=389826)](https://julialang.zulipchat.com/#narrow/stream/279055-sciml-bridged)
 [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
+[![CI](https://github.com/cogpy/cogpilot.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/cogpy/cogpilot.jl/actions/workflows/CI.yml)
+[![E2E Deep Tree Echo](https://github.com/cogpy/cogpilot.jl/actions/workflows/E2E_DeepTreeEcho.yml/badge.svg)](https://github.com/cogpy/cogpilot.jl/actions/workflows/E2E_DeepTreeEcho.yml)
+[![Deploy Interactive Docs](https://github.com/cogpy/cogpilot.jl/actions/workflows/InteractiveDocs.yml/badge.svg)](https://github.com/cogpy/cogpilot.jl/actions/workflows/InteractiveDocs.yml)
+[![codecov](https://codecov.io/gh/cogpy/cogpilot.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/cogpy/cogpilot.jl)
 
 **A unified cognitive architecture for computational intelligence grounded in the mathematics of rooted trees and OEIS A000081.**
 
