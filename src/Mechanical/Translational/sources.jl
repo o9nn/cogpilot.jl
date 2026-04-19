@@ -30,7 +30,9 @@ Linear 1D position input source.  Set `solves_force=false` to force input force 
   - `s`: real input
 """
 @component function Position(solves_force = true; name)
-    vars = []
+    vars = @variables begin
+        s_pos(t), [guess = 0.0, description = "Integrated position of flange"]
+    end
 
     systems = @named begin
         flange = MechanicalPort(; v = 0)
@@ -38,7 +40,8 @@ Linear 1D position input source.  Set `solves_force=false` to force input force 
     end
 
     eqs = [
-        D(s.u) ~ flange.v
+        s_pos ~ s.u
+        D(s_pos) ~ flange.v
     ]
 
     !solves_force && push!(eqs, 0 ~ flange.f)
