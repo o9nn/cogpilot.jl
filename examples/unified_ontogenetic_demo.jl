@@ -229,7 +229,7 @@ println()
 println("💾 Step 11: Saving System State")
 println("-"^70)
 
-output_file = "/home/ubuntu/cogpilot.jl/unified_ontogenetic_state.txt"
+output_file = "unified_ontogenetic_state.txt"
 save_ontogenetic_state(unified_system, output_file)
 
 println()
