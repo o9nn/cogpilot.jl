@@ -595,7 +595,7 @@ dm ────►               │  │ area
     end
 
     vars = @variables begin
-        x(t) = x_int
+        x(t), [guess = x_int]
         vol(t), [guess = x_int * area]
     end
 
@@ -625,7 +625,7 @@ dm ────►               │  │ area
     p = moving_volume.port.p
 
     eqs = [vol ~ x * area
-           D(x) ~ flange.v * direction
+           x ~ moving_volume.x + x_int
            damper.area ~ damper_area
            connect(port, damper.port_b)
            connect(moving_volume.port, damper.port_a)

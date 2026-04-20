@@ -60,15 +60,7 @@ Fluid parameter setter for isothermal compressible fluid domain.  Defaults given
         p_gas = gas_pressure
     end
 
-    vars = @variables begin
-        dm(t), [guess = 0, connect = Flow]
-    end
-
-    eqs = [
-        dm ~ 0
-    ]
-
-    System(eqs, t, vars, pars; name)
+    System(Equation[], t, [], pars; name)
 end
 
 function transition(x1, x2, y1, y2, x)

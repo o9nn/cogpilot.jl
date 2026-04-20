@@ -34,8 +34,12 @@ Ideal sensor to measure the absolute flange angular velocity
         flange = Flange()
         w = RealOutput()
     end
+    @variables begin
+        phi(t), [guess = 0.0, description = "Absolute angle of flange"]
+    end
     @equations begin
-        D(flange.phi) ~ w.u
+        phi ~ flange.phi
+        D(phi) ~ w.u
         flange.tau ~ 0
     end
 end
