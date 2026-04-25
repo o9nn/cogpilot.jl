@@ -9,6 +9,18 @@ const GROUP = get(ENV, "GROUP", "All")
         end
     end
 
+    if GROUP == "JJJML" || GROUP == "All"
+        @safetestset "JJJML" begin
+            include("test_jjjml.jl")
+        end
+    end
+
+    if GROUP == "DeepTreeEcho" || GROUP == "All"
+        @safetestset "DeepTreeEcho" begin
+            include("test_deep_tree_echo.jl")
+        end
+    end
+
     if GROUP == "Core" || GROUP == "All"
         @testset "Core" begin
             # Blocks
