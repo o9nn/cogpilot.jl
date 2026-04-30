@@ -16,12 +16,12 @@ macro symcheck(ex)
     end
 end
 
-#include("Blocks/Blocks.jl")
-#include("Mechanical/Mechanical.jl")
-#include("Thermal/Thermal.jl")
-#include("Electrical/Electrical.jl")
-#include("Magnetic/Magnetic.jl")
-#include("Hydraulic/Hydraulic.jl")
+include("Blocks/Blocks.jl")
+include("Mechanical/Mechanical.jl")
+include("Thermal/Thermal.jl")
+include("Electrical/Electrical.jl")
+include("Magnetic/Magnetic.jl")
+include("Hydraulic/Hydraulic.jl")
 include("JJJML/JJJML.jl")
 include("DeepTreeEcho/DeepTreeEcho.jl")
 

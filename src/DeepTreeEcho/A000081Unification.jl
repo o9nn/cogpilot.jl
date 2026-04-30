@@ -627,7 +627,7 @@ Print formatted status of the unified system.
 function print_unified_status(system::A000081UnifiedSystem)
     status = get_unified_status(system)
     
-    println("\n" * "=" * "^60)
+    println("\n" * "=" ^ 60)
     println("🌳 Deep Tree Echo: A000081 Unified System Status")
     println("=" ^ 60)
     println("  Generation: $(status["generation"])")

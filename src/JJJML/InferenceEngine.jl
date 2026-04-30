@@ -86,6 +86,9 @@ mutable struct LLMInferenceEngine{T}
     model::Union{TransformerModel{T}, Nothing}
     kv_cache::Union{KVCache{T}, Nothing}
     config::InferenceConfig
+    function LLMInferenceEngine{T}(model, kv_cache, config) where {T}
+        new{T}(model, kv_cache, config)
+    end
 end
 
 """
