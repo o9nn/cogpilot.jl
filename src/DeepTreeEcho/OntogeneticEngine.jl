@@ -51,6 +51,18 @@ mutable struct A000081Generator
     end
 end
 
+# Provide backward-compatible `a000081` property (returns count per order)
+function Base.getproperty(gen::A000081Generator, name::Symbol)
+    if name === :a000081
+        # Return a vector of tree counts per order from tree_cache
+        max_n = getfield(gen, :max_order)
+        cache = getfield(gen, :tree_cache)
+        return [length(get(cache, i, Vector{Int}[])) for i in 1:max_n]
+    else
+        return getfield(gen, name)
+    end
+end
+
 """
     OntogeneticState
 
@@ -82,6 +94,15 @@ mutable struct OntogeneticState
             1,
             Dict[]
         )
+    end
+end
+
+# Provide backward-compatible `population` property (alias for tree_population)
+function Base.getproperty(state::OntogeneticState, name::Symbol)
+    if name === :population
+        return getfield(state, :tree_population)
+    else
+        return getfield(state, name)
     end
 end
 

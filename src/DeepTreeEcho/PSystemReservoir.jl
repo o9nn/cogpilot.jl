@@ -12,10 +12,11 @@ module PSystemReservoir
 using LinearAlgebra
 using Random
 
-export MembraneReservoir, MembraneState, EvolutionRule
+export MembraneReservoir, MembraneState, EvolutionRule, Multiset
 export create_membrane_reservoir, evolve_membrane!, apply_rules!
 export encode_state_as_multiset, decode_multiset_to_state
 export membrane_communication!, dissolve_membrane!
+export add_evolution_rule!
 
 """
     Multiset

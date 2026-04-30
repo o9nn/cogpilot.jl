@@ -103,6 +103,7 @@ using .JSurfaceReactor
 using .BSeriesRidge
 using .PSystemReservoir
 using .MembraneGarden
+import .MembraneGarden: harvest_feedback!
 using .OntogeneticEngine
 using .TaskflowIntegration
 using .PackageIntegration

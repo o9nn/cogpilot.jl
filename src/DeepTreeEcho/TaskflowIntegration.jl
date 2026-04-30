@@ -336,9 +336,9 @@ function taskgraph_to_tree(graph::TaskGraph)
     # Compute task levels
     levels = compute_task_levels(graph)
     
-    # Sort by execution order and extract levels
-    topological_sort!(graph)
-    level_sequence = [levels[id] + 1 for id in graph.execution_order]
+    # Sort by task ID (original creation order) and extract levels
+    sorted_ids = sort(collect(keys(graph.tasks)))
+    level_sequence = [levels[id] + 1 for id in sorted_ids]
     
     return level_sequence
 end

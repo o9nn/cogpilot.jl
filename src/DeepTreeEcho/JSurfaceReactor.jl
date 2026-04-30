@@ -34,6 +34,7 @@ struct JSurface
     hamiltonian::Function
     evolution_operators::Vector{Function}
     dimension::Int
+    symplectic::Bool
     
     function JSurface(dim::Int; symplectic::Bool=true)
         # Create skew-symmetric structure matrix for symplectic geometry
@@ -59,7 +60,12 @@ struct JSurface
             selection_operator
         ]
         
-        new(J, H, ops, dim)
+        new(J, H, ops, dim, symplectic)
+    end
+    
+    # Direct field constructor for rebuilding with custom hamiltonian
+    function JSurface(J::Matrix{Float64}, H::Function, ops::Vector{Function}, dim::Int, symp::Bool)
+        new(J, H, ops, dim, symp)
     end
 end
 
@@ -111,12 +117,9 @@ function create_jsurface(dim::Int;
     
     if !isnothing(hamiltonian)
         # Replace default Hamiltonian
-        surface = JSurface(
-            surface.structure_matrix,
-            hamiltonian,
-            surface.evolution_operators,
-            surface.dimension
-        )
+        surface = JSurface(surface.structure_matrix, hamiltonian, 
+                          surface.evolution_operators, surface.dimension, 
+                          surface.symplectic)
     end
     
     return surface
@@ -173,6 +176,7 @@ function gradient_flow!(surface::JSurface, state::JSurfaceState, dt::Float64)
     # Update position: ψ_{n+1} = ψ_n + dt · v
     state.position += dt * state.velocity
     
+    state.generation += 1
     return nothing
 end
 
@@ -217,6 +221,7 @@ function symplectic_integrate!(surface::JSurface, state::JSurfaceState, dt::Floa
     # Update velocity
     state.velocity = (state.position - [q; p]) / dt
     
+    state.generation += 1
     return nothing
 end
 

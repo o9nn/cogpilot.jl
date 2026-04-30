@@ -344,10 +344,32 @@ function generate_trees_up_to_order(max_order::Int)
         return trees
     else
         @warn "RootedTrees.jl not available, generating simple trees"
-        # Generate simple level sequences
+        # Generate all rooted trees using hardcoded level sequences
+        # A000081: 1, 1, 2, 4, 9, 20, 48, ...
+        all_trees_by_order = Dict{Int, Vector{Vector{Int}}}(
+            1 => [[1]],
+            2 => [[1, 2]],
+            3 => [[1, 2, 3], [1, 2, 2]],
+            4 => [[1, 2, 3, 4], [1, 2, 3, 3], [1, 2, 3, 2], [1, 2, 2, 2]],
+            5 => [[1, 2, 3, 4, 5], [1, 2, 3, 4, 4], [1, 2, 3, 4, 3],
+                  [1, 2, 3, 4, 2], [1, 2, 3, 3, 3], [1, 2, 3, 3, 2],
+                  [1, 2, 3, 2, 2], [1, 2, 2, 2, 2], [1, 2, 2, 3, 3]],
+            6 => [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 5], [1, 2, 3, 4, 5, 4],
+                  [1, 2, 3, 4, 5, 3], [1, 2, 3, 4, 5, 2], [1, 2, 3, 4, 4, 4],
+                  [1, 2, 3, 4, 4, 3], [1, 2, 3, 4, 4, 2], [1, 2, 3, 4, 3, 3],
+                  [1, 2, 3, 4, 3, 2], [1, 2, 3, 4, 2, 2], [1, 2, 3, 3, 3, 3],
+                  [1, 2, 3, 3, 3, 2], [1, 2, 3, 3, 2, 2], [1, 2, 3, 2, 2, 2],
+                  [1, 2, 2, 2, 2, 2], [1, 2, 2, 3, 3, 3], [1, 2, 2, 3, 3, 2],
+                  [1, 2, 2, 3, 4, 4], [1, 2, 2, 3, 4, 3]]
+        )
         trees = Vector{Int}[]
         for order in 1:max_order
-            push!(trees, ones(Int, order))
+            if haskey(all_trees_by_order, order)
+                append!(trees, all_trees_by_order[order])
+            else
+                # For orders beyond our hardcoded data, generate linear tree
+                push!(trees, collect(1:order))
+            end
         end
         return trees
     end

@@ -129,8 +129,42 @@ function generate_trees_up_to_order(order::Int)
         push!(trees, RootedTreeSimple([1, 2, 2, 2]))  # Three branches
     end
     
-    # For higher orders, would use proper tree generation algorithm
-    # This is a simplified version for demonstration
+    # Order 5: five nodes (9 trees)
+    if order >= 5
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 5]))  # Linear chain
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 4]))  # Branch at depth 4
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 3]))  # Branch at depth 3
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 2]))  # Branch at depth 2
+        push!(trees, RootedTreeSimple([1, 2, 3, 3, 3]))  # Two branches at depth 3
+        push!(trees, RootedTreeSimple([1, 2, 3, 3, 2]))  # Branches at 3 and 2
+        push!(trees, RootedTreeSimple([1, 2, 3, 2, 2]))  # Two branches at depth 2
+        push!(trees, RootedTreeSimple([1, 2, 2, 2, 2]))  # Four branches
+        push!(trees, RootedTreeSimple([1, 2, 2, 3, 3]))  # Symmetric branches
+    end
+    
+    # Order 6: six nodes (20 trees)
+    if order >= 6
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 5, 6]))  # Linear chain
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 5, 5]))  # Branch at depth 5
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 5, 4]))  # Branch at depth 4
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 5, 3]))  # Branch at depth 3
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 5, 2]))  # Branch at depth 2
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 4, 4]))  # Two branches at 4
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 4, 3]))  # Branches at 4,3
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 4, 2]))  # Branches at 4,2
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 3, 3]))  # Two branches at 3
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 3, 2]))  # Branches at 3,2
+        push!(trees, RootedTreeSimple([1, 2, 3, 4, 2, 2]))  # Two branches at 2
+        push!(trees, RootedTreeSimple([1, 2, 3, 3, 3, 3]))  # Three branches at 3
+        push!(trees, RootedTreeSimple([1, 2, 3, 3, 3, 2]))  # Branches at 3,3,2
+        push!(trees, RootedTreeSimple([1, 2, 3, 3, 2, 2]))  # Branches at 3,2,2
+        push!(trees, RootedTreeSimple([1, 2, 3, 2, 2, 2]))  # Branches at 2,2,2
+        push!(trees, RootedTreeSimple([1, 2, 2, 2, 2, 2]))  # Five branches
+        push!(trees, RootedTreeSimple([1, 2, 2, 3, 3, 3]))  # Symmetric deep
+        push!(trees, RootedTreeSimple([1, 2, 2, 3, 3, 2]))  # Mixed symmetric
+        push!(trees, RootedTreeSimple([1, 2, 2, 3, 4, 4]))  # Asymmetric deep
+        push!(trees, RootedTreeSimple([1, 2, 2, 3, 4, 3]))  # Asymmetric mixed
+    end
     
     return trees
 end
