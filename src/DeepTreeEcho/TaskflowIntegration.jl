@@ -333,6 +333,9 @@ Convert a task graph to a rooted tree (level sequence).
 - `Vector{Int}`: Level sequence representation
 """
 function taskgraph_to_tree(graph::TaskGraph)
+    # Ensure execution_order is populated (needed by compute_task_levels)
+    topological_sort!(graph)
+    
     # Compute task levels
     levels = compute_task_levels(graph)
     

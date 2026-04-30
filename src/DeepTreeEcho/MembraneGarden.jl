@@ -7,6 +7,7 @@ to roots, creating recursive learning dynamics.
 """
 module MembraneGarden
 
+using Statistics
 using LinearAlgebra
 using Random
 
