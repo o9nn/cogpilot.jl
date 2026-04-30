@@ -4,6 +4,7 @@ Library to model 1-dimensional, rotational mechanical systems
 module Rotational
 
 using ModelingToolkit, Symbolics, IfElse
+using SciCompDSL: @mtkmodel
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using ...Blocks: RealInput, RealOutput
 import ...@symcheck

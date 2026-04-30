@@ -1,5 +1,6 @@
 module FluxTubes
 using ModelingToolkit
+using SciCompDSL: @mtkmodel
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using ...Electrical: Pin
 

@@ -1,5 +1,6 @@
 module MultiBody2D
 
+using SciCompDSL: @mtkmodel
 using ModelingToolkit, Symbolics, IfElse
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using ..TranslationalPosition

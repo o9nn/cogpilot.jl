@@ -3,6 +3,7 @@ Library to model iso-thermal compressible liquid fluid flow
 """
 module IsothermalCompressible
 
+using SciCompDSL: @mtkmodel
 using ModelingToolkit, Symbolics
 using ModelingToolkit: t_nounits as t, D_nounits as D
 

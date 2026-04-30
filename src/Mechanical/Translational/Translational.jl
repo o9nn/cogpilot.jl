@@ -3,6 +3,7 @@ Library to model 1-dimensional, translational mechanical systems
 """
 module Translational
 
+using SciCompDSL: @mtkmodel
 using ModelingToolkit, Symbolics
 using ModelingToolkit: getdefault, t_nounits as t, D_nounits as D
 
